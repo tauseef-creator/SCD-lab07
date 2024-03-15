@@ -48,7 +48,7 @@ app.post('/tasks', (req, res) => {
         priority: req.body.priority
     };
     tasks.push(task);
-    res.redirect('/'); // Redirect to the home page after adding a task
+    res.redirect('/');
 });
 
 app.get('/tasks', (req, res) => {
