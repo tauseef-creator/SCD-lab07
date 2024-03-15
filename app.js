@@ -5,6 +5,7 @@ const port = 3000;
 let tasks = [];
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true })); // Add this line
 
 app.get('/', (req, res) => {
     res.send(`
@@ -32,6 +33,7 @@ app.get('/', (req, res) => {
             </select><br>
             <input type="submit" value="Add Task">
         </form>
+        <button onclick="window.location.href='/tasks'">View Tasks</button>
     `);
 });
 
@@ -42,11 +44,11 @@ app.post('/tasks', (req, res) => {
         description: req.body.description,
         dueDate: req.body.dueDate,
         category: req.body.category,
-        completed: req.body.completed || false,
+        completed: req.body.completed === 'on',
         priority: req.body.priority
     };
     tasks.push(task);
-    res.status(201).send(task);
+    res.redirect('/'); // Redirect to the home page after adding a task
 });
 
 app.get('/tasks', (req, res) => {
@@ -62,7 +64,21 @@ app.get('/tasks', (req, res) => {
             }
         });
     }
-    res.send(result);
+
+    let html = '<h1>Tasks</h1>';
+    result.forEach(task => {
+        html += `
+            <h2>${task.title}</h2>
+            <p>Description: ${task.description}</p>
+            <p>Due Date: ${task.dueDate}</p>
+            <p>Category: ${task.category}</p>
+            <p>Completed: ${task.completed ? 'Yes' : 'No'}</p>
+            <p>Priority: ${task.priority}</p>
+            <hr>
+        `;
+    });
+
+    res.send(html);
 });
 
 app.listen(port, () => {
